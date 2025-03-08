@@ -29,6 +29,7 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
+// **Task 7: logging in as a registered user.
 regd_users.post("/login", (req,res) => {
   const { username, password } = req.body;
 
@@ -48,6 +49,7 @@ regd_users.post("/login", (req,res) => {
   });
 });
 
+// **Task 8: adding or modifying a book review.
 regd_users.put("/auth/review/:isbn", authenticateJWT, (req, res) => {
   const isbn = req.params.isbn;
   const review = req.query.review;
@@ -73,6 +75,7 @@ regd_users.put("/auth/review/:isbn", authenticateJWT, (req, res) => {
   });
 });
 
+// **Task 9: deleting a book review under
 regd_users.delete("/auth/review/:isbn", authenticateJWT, (req, res) => {
   const isbn = req.params.isbn;
   const username = req.user.username;
