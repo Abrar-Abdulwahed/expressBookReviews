@@ -1,30 +1,14 @@
 const express = require('express');
 let books = require("./booksdb.js");
+const fs = require('fs');
+const usersdb = require('./usersdb.js');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
-// **Task 6: registering a new user
-public_users.post("/register", (req,res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: "Both username and password are required." });
-  }
-
-  if (users[username]) {
-    return res.status(400).json({ message: "Username already exists." });
-  }
-
-  users[username] = { password };
-  return res.status(200).json({ message: "User registered successfully." });
-});
-
 // **Task 1: Get the book list available in the shop**
 public_users.get('/',function (req, res) {
-  const allBooks = Object.values(books);
-  return res.status(200).json(allBooks);
+  return res.status(200).json({books});
 });
 
 // **Task 2: Get book details based on ISBN**
@@ -42,25 +26,27 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // **Task 3: Get book details based on author**
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author;
-  const booksByAuthor = Object.values(books).filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
+  const booksByAuthor = Object.values(books)
+  .filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
   
   if (booksByAuthor.length === 0) {
     return res.status(404).json({ message: "No books found by this author." });
   }
 
-  return res.status(200).json(booksByAuthor);
+  return res.status(200).json({booksByAuthor});
 });
 
 // **Task 4: Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   const title = req.params.title;
-  const booksByTitle = Object.values(books).filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
+  const booksByTitle = Object.values(books)
+  .filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
 
   if (booksByTitle.length === 0) {
     return res.status(404).json({ message: "No books found with this title." });
   }
 
-  return res.status(200).json(booksByTitle);
+  return res.status(200).json({booksByTitle});
 });
 
 // **Task 5: Get book reviews

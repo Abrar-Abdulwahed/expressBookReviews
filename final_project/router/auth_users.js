@@ -4,8 +4,10 @@ let books = require("./booksdb.js");
 const regd_users = express.Router();
 
 let users = [];
+const SECRET_KEY = "myapp"
 
 const isValid = (username)=>{
+  console.log('usersssare', users)
   return users.some(user => user.username === username);
 }
 
@@ -14,7 +16,7 @@ const authenticatedUser = (username,password)=>{
 }
 
 const authenticateJWT = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Extract token from header
+  const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({ message: "Access denied. No token provided." });
@@ -29,6 +31,23 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
+// **Task 6: registering a new user
+regd_users.post("/register", (req,res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Both username and password are required." });
+  }
+
+  if (users[username]) {
+    return res.status(400).json({ message: "Username already exists." });
+  }
+
+  users.push({ username, password });
+  console.log('users', users)
+  return res.status(200).json({ message: "User registered successfully." });
+});
+
 // **Task 7: logging in as a registered user.
 regd_users.post("/login", (req,res) => {
   const { username, password } = req.body;
@@ -42,11 +61,7 @@ regd_users.post("/login", (req,res) => {
   }
 
   const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-
-  return res.status(200).json({
-    message: "Login successful.",
-    token: token
-  });
+  return res.status(200).json({ message: "Login successful.", token });
 });
 
 // **Task 8: adding or modifying a book review.
@@ -95,7 +110,6 @@ regd_users.delete("/auth/review/:isbn", authenticateJWT, (req, res) => {
     reviews: books[isbn].reviews
   });
 });
-
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
