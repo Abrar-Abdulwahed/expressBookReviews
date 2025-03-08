@@ -1,7 +1,5 @@
 const express = require('express');
 let books = require("./booksdb.js");
-const fs = require('fs');
-const usersdb = require('./usersdb.js');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
